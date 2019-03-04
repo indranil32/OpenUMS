@@ -1,0 +1,60 @@
+pache Syncope - CHANGES
+Licensed under Apache License 2.0 - http://www.apache.org/licenses/LICENSE-2.0
+--------------------------------------------------------------------------------
+
+Release Notes - Syncope - Version 2.1.0
+================================================================================
+
+wget https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz -O /tmp/openjdk-11.0.2_linux-x64_bin.tar.gz
+sudo tar xfvz /tmp/openjdk-11.0.2_linux-x64_bin.tar.gz --directory /usr/lib/jvm
+sudo sh -c 'for bin in /usr/lib/jvm/jdk-11.0.2/bin/*; do update-alternatives --install /usr/bin/$(basename $bin) $(basename $bin) $bin 100; done'
+sudo sh -c 'for bin in /usr/lib/jvm/jdk-11.0.2/bin/*; do update-alternatives --set $(basename $bin) $bin; done'
+JAVA_HOME=/usr/lib/jvm/jdk-11.0.2
+sudo update-alternatives --config java
+
+
+sudo apt-get update
+sudo apt-get install -y unzip xvfb libxi6 libgconf-2-4
+sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add
+sudo echo "deb [arch=amd64]  http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+sudo apt-get -y update
+sudo apt-get -y install google-chrome-stable
+wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip
+unzip chromedriver_linux64.zip
+sudo mv chromedriver /usr/bin/chromedriver
+sudo chown root:root /usr/bin/chromedriver
+sudo chmod +x /usr/bin/chromedriver
+
+
+mvn archetype:generate -DarchetypeGroupId=org.apache.syncope  -DarchetypeArtifactId=syncope-archetype  -DarchetypeRepository=http://repo1.maven.org/maven2  -DarchetypeVersion=2.1.3
+
+Define value for property 'groupId': org.newremmedia
+Define value for property 'artifactId': openums
+Define value for property 'version' 1.0-SNAPSHOT: :
+Define value for property 'package' org.newremmedia: :
+[INFO] Using property: adminPassword = DE088591C00CC98B36F5ADAAF7DA2B004CF7F2FE7BBB45B766B6409876E2F3DB13C7905C6AA59464
+Define value for property 'anonymousKey': newremmedia
+Define value for property 'jwsKey': newremmedia
+Define value for property 'secretKey': newremmedia
+Confirm properties configuration:
+groupId: org.newremmedia
+artifactId: openums
+version: 1.0-SNAPSHOT
+package: org.newremmedia
+adminPassword: DE088591C00CC98B36F5ADAAF7DA2B004CF7F2FE7BBB45B766B6409876E2F3DB13C7905C6AA59464
+anonymousKey: newremmedia
+jwsKey: newremmedia
+secretKey: newremmedia
+
+
+https://www.digitalocean.com/community/tutorials/install-tomcat-9-ubuntu-1804
+
+mvn clean verify  -Dconf.directory=/var/lib/syncope/conf  -Dbundles.directory=/var/lib/syncope/bundles  -Dlog.directory=/var/lib/syncope/log -DskipTests=true
+sudo cp core/target/classes/*properties /var/lib/syncope/conf
+sudo cp console/target/classes/*properties /var/lib/syncope/conf
+sudo cp enduser/target/classes/*properties /var/lib/syncope/conf
+cp enduser/target/classes/customFormAttributes.json /var/lib/syncope/conf
+cp enduser/target/classes/customTemplate.json /var/lib/syncope/conf
+sudo cp core/target/syncope.war /opt/tomcat9/webapps/
+sudo cp console/target/syncope-console.war /opt/tomcat9/webapps/
+sudo cp enduser/target/syncope-enduser.war /opt/tomcat9/webapps/

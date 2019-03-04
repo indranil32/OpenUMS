@@ -1,11 +1,15 @@
 .project
 .settings/
 common/.project
-common/.settings/
+common/.settings
 console/.project
-console/.settings/
+console/.settings
 core/.project
-core/.settings/
+core/.settings
 enduser/.project
-enduser/.settings/
+enduser/.settings
+common/target
+core/target
+consoler/target
+enduser/target
 
