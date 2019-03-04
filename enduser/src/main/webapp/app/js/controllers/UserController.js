@@ -336,7 +336,7 @@ angular.module("self").controller("UserController", ['$scope', '$rootScope', '$l
     	  KillBillService.getKillBillDetails().then(function(response) {
     		  var req = {
          			 method: 'GET',
-         			 url: response.baseUrl+response.packages,
+         			 url: response.baseUrl+response.packagesURL,
          			 headers: response.headers         			 
     		  }    		  
     		  var pkgList = KillBillService.getBaseAvailablePackages(req);
@@ -348,7 +348,7 @@ angular.module("self").controller("UserController", ['$scope', '$rootScope', '$l
 
 	    	  req = {
 	         			 method: 'GET',
-	         			 url: response.baseUrl+response.paymentMethods,
+	         			 url: response.baseUrl+response.paymentMethodsURL,
 	         			 headers: response.headers         			 
 	    	  }
 	    	  var payList = KillBillService.getPaymentMethods(req);
