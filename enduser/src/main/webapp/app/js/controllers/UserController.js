@@ -333,7 +333,7 @@ angular.module("self").controller("UserController", ['$scope', '$rootScope', '$l
       };
       
       var initKillBillResources = function () {
-    	  KillBillService.getKillBillDetails().then(fucntion(response) {
+    	  KillBillService.getKillBillDetails().then(function(response) {
     		  var req = {
          			 method: 'GET',
          			 url: response.baseUrl+response.packages,
