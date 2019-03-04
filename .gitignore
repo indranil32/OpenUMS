@@ -1,0 +1,11 @@
+.project
+.settings/
+common/.project
+common/.settings/
+console/.project
+console/.settings/
+core/.project
+core/.settings/
+enduser/.project
+enduser/.settings/
+
