@@ -46,12 +46,7 @@ angular.module("self").controller("UserController", ['$scope', '$rootScope', '$l
     $scope.captchaInput = {
       value: ""
     };
-    $scope.availableOptions = {
-    		//key - basePackage_Selected 
-    		basePackages: [],
-    		//Key - paymentMethod_Selected 
-    		paymentMethods: []    	
-    };
+    $scope.user.availableOptions = {};
 
     /* <Extensions> */
     $scope.loadFromSAML2AuthSelfReg = $rootScope.saml2idps.userAttrs && $rootScope.saml2idps.userAttrs.length;
@@ -76,6 +71,12 @@ angular.module("self").controller("UserController", ['$scope', '$rootScope', '$l
         selectedAuxClasses: [],
         groupSchemas: ['own']
       };
+
+      //key - basePackage_Selected 
+      $scope.user.availableOptions.basePackages = [];
+      //Key - paymentMethod_Selected 
+      $scope.user.availableOptions.paymentMethods = [];
+      $scope.user.killbillConfig = {};
 
       var findLoadedSAML2AttrValue = function (schemaKey) {
         var found = $filter('filter')($rootScope.saml2idps.userAttrs, {"schema": schemaKey}, true);
@@ -333,30 +334,53 @@ angular.module("self").controller("UserController", ['$scope', '$rootScope', '$l
       };
       
       var initKillBillResources = function () {
-    	  KillBillService.getKillBillDetails().then(function(response) {
-    		  var req = {
-         			 method: 'GET',
-         			 url: response.baseUrl+response.packagesURL,
-         			 headers: response.headers         			 
-    		  }    		  
-    		  var pkgList = KillBillService.getBaseAvailablePackages(req);
-	    	  for (var i = 0 , len=pkgList.length; i < len ; i++) {
-	    		for (var j = 0 , len2= pkgList[i].finalPhaseRecurringPrice.length; j < len2 ; j++) {
-	    			$scope.availableOptions.basePackages.push({key: pkgList[i].product, content: pkgList[i].product+ " -- " + pkgList[i].plan + " -- " + pkgList[i].finalPhaseBillingPeriod + " -- " + pkgList[i].finalPhaseRecurringPrice[j].currency + " -- " + pkgList[i].finalPhaseRecurringPrice[j].value});
-	    		}
-	    	  }
+          $scope.user.availableOptions = {};
+          $scope.user.availableOptions.basePackages = [];
+          $scope.user.availableOptions.paymentMethods = [];
 
-	    	  req = {
-	         			 method: 'GET',
-	         			 url: response.baseUrl+response.paymentMethodsURL,
-	         			 headers: response.headers         			 
-	    	  }
-	    	  var payList = KillBillService.getPaymentMethods(req);
-	    	  for (var i = 0 , len=payList.length; i < len ; i++) {
-	    		  $scope.availableOptions.paymentMethods.push({key: payList[i].paymentMethodId, content: payList[i].pluginName});
-	    	  }
-	    	  console.log($scope.availableOptions)
-    	  });
+    	  KillBillService.getKillBillDetails().then(function(response) {
+		  $scope.user.killbillConfig = response;
+                  console.log($scope.user.killbillConfig);
+   		  var finalHeaders = response.headers
+		  // to avoid CORS
+		  finalHeaders['if-modified-since'] = undefined;
+		  finalHeaders['If-Modified-Since'] = undefined;
+
+		  var req = {
+         		method: 'GET',
+         		url: response.baseUrl+response.packagesURL,
+         		headers: finalHeaders         			 
+    		  }
+		  KillBillService.getBaseAvailablePackages(req).then(function(data) {
+    	 	  	var pkgList = data;
+	    	  	console.log(pkgList)
+	        	for (var i = 0 , len=pkgList.length; i < len ; i++) {
+        			for (var j = 0 , len2= pkgList[i].finalPhaseRecurringPrice.length; j < len2 ; j++) {
+	        			var expr = pkgList[i].product+  "-" + pkgList[i].plan + "-" + pkgList[i].finalPhaseBillingPeriod + "-" + pkgList[i].finalPhaseRecurringPrice[j].currency + "-" + pkgList[i].finalPhaseRecurringPrice[j].value;
+        				$scope.user.availableOptions.basePackages.push({key: expr, content: expr});
+        			}
+ 		       	}
+	    	 }, function(err) {
+    			console.log(err);
+	    	 });
+
+	    	 req = {
+	         	method: 'GET',
+	         	url: response.baseUrl+response.paymentMethodsURL,
+	         	headers: finalHeaders         			 
+	    	 }
+	    	 KillBillService.getPaymentMethods(req).then(function(data) {
+    		 	var payList = data
+	        	console.log(payList)
+        		for (var i = 0 , len=payList.length; i < len ; i++) {
+        			$scope.user.availableOptions.paymentMethods.push({key: payList[i].pluginName, content: payList[i].pluginName});
+	        	}
+    		}, function(err) {
+    			console.log(err);
+	    	});
+    		console.log($scope.user.availableOptions);
+	  });
+    	console.log($scope.user.availableOptions);
       };
 
       var initProperties = function () {

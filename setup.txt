@@ -58,3 +58,5 @@ cp enduser/target/classes/customTemplate.json /var/lib/syncope/conf
 sudo cp core/target/syncope.war /opt/tomcat9/webapps/
 sudo cp console/target/syncope-console.war /opt/tomcat9/webapps/
 sudo cp enduser/target/syncope-enduser.war /opt/tomcat9/webapps/
+
+mvn install:install-file -Dfile=syncope-client-console-2.1.3-newremmedia.jar -DgroupId=org.apache.syncope.client -DartifactId=syncope-client-console -Dversion=2.1.3-newremmedia -Dpackaging=jar
