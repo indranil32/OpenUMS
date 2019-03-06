@@ -32,19 +32,57 @@ under the License.
 			ng-disabled="schema.readonly || customReadonly(schema.key)" 
 			ng-init="initAttribute(schema, index)"
 			ng-options="itemList.key as itemList.content for itemList in user.availableOptions[schema.key.split('_')[0]+'s']" 
-			name="{{schema.key}}">
-			<!-- ng-dropdown ng-change="$ctrl.changeme()" -->
+			name="{{schema.key}}"
+			ng-dropdown ng-change="user.infoUpdate(plainSchema.key)">
 			<option ng-option value="">Please Select...</option>
 		</select>
   </div>
   <div class="input-group input-group-sm"  ng-if="user.plainAttrs[schema.key].values[index] == 'killbill-stripe' || user.plainAttrs[schema.key].values[index] == 'killbill-paypal-express'">
-	  <form target="_blank" action="{{user.killbillConfig.stripeURL}}" method="post" ng-if="user.plainAttrs[schema.key].values[index] == 'killbill-stripe'" >
-		<input type="hidden" name="externalKey" value="{{user.username}}" />
+	<!-- Stripe -->
+	<form target="_blank" action="{{user.trustSrc(user.killbillConfig.stripeURL)}}" method="post" ng-if="user.plainAttrs[plainSchema.key].values[0] == 'killbill-stripe'" >
+		
+		<input type="hidden" name="name" value="{{user.virAttrs['name'].values[0]}}">
+	    <input type="hidden" name="email" value="{{user.virAttrs['email'].values[0]}}">
+	    <input type="hidden" name="externalKey" value="{{user.virAttrs['email'].values[0]}}">
+	    <input type="hidden" name="currency" value="{{user.virAttrs['currency_Selected'].values[0]}}">
+	    <input type="hidden" name="address" value="{{user.virAttrs['address'].values[0]}}">
+	    <input type="hidden" name="postalCode" value="{{user.virAttrs['postalCode'].values[0]}}">
+	    <input type="hidden" name="company" value="{{user.virAttrs['company'].values[0]}}">
+	    <input type="hidden" name="city" value="{{user.virAttrs['city'].values[0]}}">
+	    <input type="hidden" name="state" value="{{user.virAttrs['state'].values[0]}}">
+	    <input type="hidden" name="country" value="{{user.virAttrs['country'].values[0]}}">
+	    <input type="hidden" name="phone" value="{{user.virAttrs['phone'].values[0]}}">
+	    
+	    <input type="hidden" name="package" value="{{user.plainAttrs['basePackage_Selected'].values[0]}}">
+	    <input type="hidden" name="price" value="{{user.plainAttrs.amount.values[0]}}">
+		
 		<br/>
 		<script src="https://checkout.stripe.com/v3/checkout.js" class="stripe-button" data-key="{{user.killbillConfig.stripePublicKey}}"></script>
 	</form>
-	<form target="_blank" action="{{user.killbillConfig.paypalURL +''+ user.username}}" method="post" ng-if="user.plainAttrs[schema.key].values[index] == 'killbill-paypal-express'">
-	<!-- <form action="https://www.sandbox.paypal.com/us/cgi-bin/webscr" method="post"> -->
+	
+	<!-- Paypal -->
+	<form target="_blank" action="{{user.trustSrc(user.killbillConfig.paypalURL)}}" method="post" ng-if="user.plainAttrs[plainSchema.key].values[0] == 'killbill-paypal-express'" class="row">
+		
+		<input type="hidden" name="name" value="{{user.virAttrs['name'].values[0]}}">
+	    <input type="hidden" name="email" value="{{user.virAttrs['email'].values[0]}}">
+	    <input type="hidden" name="externalKey" value="{{user.virAttrs['email'].values[0]}}">
+	    <input type="hidden" name="currency" value="{{user.virAttrs['currency_Selected'].values[0]}}">
+	    <input type="hidden" name="address" value="{{user.virAttrs['address'].values[0]}}">
+	    <input type="hidden" name="postalCode" value="{{user.virAttrs['postalCode'].values[0]}}">
+	    <input type="hidden" name="company" value="{{user.virAttrs['company'].values[0]}}">
+	    <input type="hidden" name="city" value="{{user.virAttrs['city'].values[0]}}">
+	    <input type="hidden" name="state" value="{{user.virAttrs['state'].values[0]}}">
+	    <input type="hidden" name="country" value="{{user.virAttrs['country'].values[0]}}">
+	    <input type="hidden" name="phone" value="{{user.virAttrs['phone'].values[0]}}">
+	    
+	    <input type="hidden" name="package" value="{{user.plainAttrs['basePackage_Selected'].values[0]}}">
+	    <input type="hidden" name="price" value="{{user.plainAttrs.amount.values[0]}}">
+		
+		<br/>
+		<input type="image" name="submit" border="0" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_buynowCC_LG.gif"   alt="PayPal - The safer, easier way to pay online!"/>
+		<img alt="" border="0" width="1" height="1" src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" />
+	</form>  
+	<!-- form target="_blank" action="https://www.sandbox.paypal.com/us/cgi-bin/webscr" method="post" ng-if="user.plainAttrs[schema.key].values[index] == 'killbill-paypal-express'">
 	     <input type="hidden" name="cmd" value="_s-xclick">
 	     <input type="hidden" name="hosted_button_id" value="34CXHXVU2J8BY">
 	     <br/>
@@ -56,7 +94,7 @@ under the License.
 	     <img alt="" border="0" 
 	          src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" 
 	          width="1" height="1">
-	</form>
+	</form-->
   </div>
 
   <div ng-switch-when="Encrypted" class="input-group input-group-sm">

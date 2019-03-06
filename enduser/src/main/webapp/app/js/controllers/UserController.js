@@ -24,10 +24,10 @@
 angular.module("self").controller("UserController", ['$scope', '$rootScope', '$location', "$state",
   'UserSelfService', 'SchemaService', 'RealmService', 'ResourceService', 'SecurityQuestionService',
   'GroupService', 'AnyService', 'BpmnProcessService', 'UserRequestsService', 'UserUtil', 'GenericUtil',
-  'ValidationExecutor', 'KillBillService', '$translate', '$filter',
+  'ValidationExecutor', 'KillBillService', '$translate', '$filter', '$sce',
   function ($scope, $rootScope, $location, $state, UserSelfService, SchemaService, RealmService,
           ResourceService, SecurityQuestionService, GroupService, AnyService, BpmnProcessService, UserRequestsService,
-          UserUtil, GenericUtil, ValidationExecutor, KillBillService, $translate, $filter) {
+          UserUtil, GenericUtil, ValidationExecutor, KillBillService, $translate, $filter, $sce) {
 
     $scope.user = {};
     $scope.confirmPassword = {
@@ -54,6 +54,64 @@ angular.module("self").controller("UserController", ['$scope', '$rootScope', '$l
     $scope.loadFromOIDCAuthSelfReg = $rootScope.oidcops.userAttrs && $rootScope.oidcops.userAttrs.length;
     /* </Extensions> */
 
+    $scope.user.trustSrc = function(src) {
+    	return $sce.trustAsResourceUrl(src);
+    };
+    
+    $scope.user.infoUpdate(name) {
+    	console.log(name);
+    	var selectedPkg = $scope.user.plainAttrs.basePackage_Selected.values;
+    	console.log(selectedPkg);
+		if (name === 'basePackage_Selected') {    			
+			var c = $scope.user.currencys[selectedPkg]
+			$scope.user.availableOptions.currencys[selectedPkg] = [];
+			$scope.user.plainAttrs.currency_Selected.values=[];
+			$scope.user.availableOptions.currencys = [];
+			for (var i = 0, len = c.length; i < len; i++) {
+				$scope.user.availableOptions.currencys.push({key: c[i], content: c[i]});    				
+			} 	 
+		} else if (name  === "currency_Selected") {
+			var selectedCurr = $scope.user.plainAttrs.currency_Selected.values;
+			console.log(selectedCurr);
+			$scope.user.plainAttrs.amount.values=[];
+			$scope.user.plainAttrs.amount.values.push(this.amount[selectedPkg +"/"+ selectedCurr]);
+			
+			
+			/*//test data
+	    	this.user.AccountId={};
+	    	this.user.AccountId.values=["1234"];
+	    	this.user.email={};
+	    	this.user.email.values=["demo91@newremmedia.com"];
+	    	this.user.address={};
+	    	this.user.address.values=["demo address"];
+	    	this.user.phone={};
+	    	this.user.phone.values=["+619999999999"];
+	    	this.user.postalCode={};
+	    	this.user.postalCode.values=["MA1234"];
+	    	this.user.country={};
+	    	this.user.country.values=["Canada"];
+	    	this.user.state={};
+	    	this.user.state.values=["Ontario"];
+	    	this.user.city={};
+	    	this.user.city.values=["Toronto"];
+	    	this.user.name={};
+	    	this.user.name.values=["New Rem Media"];
+	    	this.user.company={};
+	    	this.user.company.values=["New Rem Media"];
+	    	
+	    	this.user.plainAttrs['AccountId'].values=["1234"];
+	    	this.user.plainAttrs['email'].values=["demo91@newremmedia.com"];
+	    	this.user.plainAttrs['address'].values=["demo address"];
+	    	this.user.plainAttrs['phone'].values=["+619999999999"];
+	    	this.user.plainAttrs['postalCode'].values=["MA1234"];
+	    	this.user.plainAttrs['country'].values=["Canada"];
+	    	this.user.plainAttrs['state'].values=["Ontario"];
+	    	this.user.plainAttrs['city'].values=["Toronto"];
+	    	this.user.plainAttrs['name'].values=["New Rem Media"];
+	    	this.user.plainAttrs['company'].values=["New Rem Media"];*/
+		} 
+    };
+    
     $scope.initUser = function () {
       $scope.dynamicForm = {
         plainSchemas: [],
@@ -339,48 +397,54 @@ angular.module("self").controller("UserController", ['$scope', '$rootScope', '$l
           $scope.user.availableOptions.paymentMethods = [];
 
     	  KillBillService.getKillBillDetails().then(function(response) {
-		  $scope.user.killbillConfig = response;
-                  console.log($scope.user.killbillConfig);
-   		  var finalHeaders = response.headers
-		  // to avoid CORS
-		  finalHeaders['if-modified-since'] = undefined;
-		  finalHeaders['If-Modified-Since'] = undefined;
-
-		  var req = {
-         		method: 'GET',
-         		url: response.baseUrl+response.packagesURL,
-         		headers: finalHeaders         			 
-    		  }
-		  KillBillService.getBaseAvailablePackages(req).then(function(data) {
-    	 	  	var pkgList = data;
-	    	  	console.log(pkgList)
-	        	for (var i = 0 , len=pkgList.length; i < len ; i++) {
-        			for (var j = 0 , len2= pkgList[i].finalPhaseRecurringPrice.length; j < len2 ; j++) {
-	        			var expr = pkgList[i].product+  "-" + pkgList[i].plan + "-" + pkgList[i].finalPhaseBillingPeriod + "-" + pkgList[i].finalPhaseRecurringPrice[j].currency + "-" + pkgList[i].finalPhaseRecurringPrice[j].value;
-        				$scope.user.availableOptions.basePackages.push({key: expr, content: expr});
-        			}
- 		       	}
-	    	 }, function(err) {
-    			console.log(err);
-	    	 });
-
-	    	 req = {
-	         	method: 'GET',
-	         	url: response.baseUrl+response.paymentMethodsURL,
-	         	headers: finalHeaders         			 
-	    	 }
-	    	 KillBillService.getPaymentMethods(req).then(function(data) {
-    		 	var payList = data
-	        	console.log(payList)
-        		for (var i = 0 , len=payList.length; i < len ; i++) {
-        			$scope.user.availableOptions.paymentMethods.push({key: payList[i].pluginName, content: payList[i].pluginName});
-	        	}
-    		}, function(err) {
-    			console.log(err);
-	    	});
-    		console.log($scope.user.availableOptions);
-	  });
-    	console.log($scope.user.availableOptions);
+			  $scope.user.killbillConfig = response;
+	          console.log($scope.user.killbillConfig);
+	   		  var finalHeaders = response.headers
+			  // to avoid CORS
+			  finalHeaders['if-modified-since'] = undefined;
+			  finalHeaders['If-Modified-Since'] = undefined;
+	
+			  $scope.user.currencys = {};
+			  $scope.user.amount = {};
+			  
+			  var req = {
+	         		method: 'GET',
+	         		url: response.baseUrl+response.packagesURL,
+	         		headers: finalHeaders         			 
+	    	  }
+			  
+			  KillBillService.getBaseAvailablePackages(req).then(function(data) {
+	    	 	  	var pkgList = data;
+		        	for (var i = 0 , len=pkgList.length; i < len ; i++) {
+		        		var expr = pkgList[i].product+ "/" + pkgList[i].plan + "/" + pkgList[i].priceList + "/" + pkgList[i].finalPhaseBillingPeriod;
+		        		$scope.user.availableOptions.basePackages.push({key: expr, content: expr});
+		        		$scope.user.currencys[expr] = [];   
+	        			for (var j = 0 , len2= pkgList[i].finalPhaseRecurringPrice.length; j < len2 ; j++) {
+	        				$scope.user.currencys[expr].push(pkgList[i].finalPhaseRecurringPrice[j].currency);
+	            			var id = expr + '/' + pkgList[i].finalPhaseRecurringPrice[j].currency;
+	            			$scope.user.amount[id] = pkgList[i].finalPhaseRecurringPrice[j].value;
+	        			}
+	 		       	}
+		    	 }, function(err) {
+	    			console.log(err);
+		    	 });
+	
+		    	 req = {
+		         	method: 'GET',
+		         	url: response.baseUrl+response.paymentMethodsURL,
+		         	headers: finalHeaders         			 
+		    	 }
+		    	 KillBillService.getPaymentMethods(req).then(function(data) {
+	    		 	var payList = data
+	        		for (var i = 0 , len=payList.length; i < len ; i++) {
+	        			$scope.user.availableOptions.paymentMethods.push({key: payList[i].pluginName, content: payList[i].pluginName});
+		        	}
+	    		}, function(err) {
+	    			console.log(err);
+		    	});
+	    		console.log($scope.user.availableOptions);
+    	  });
+    	  console.log($scope.user.availableOptions);
       };
 
       var initProperties = function () {

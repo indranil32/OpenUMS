@@ -21,7 +21,7 @@
 angular.module('home', []);
 angular.module('login', []);
 angular.module('language', []);
-angular.module('self', []);
+angular.module('self', ['ngSanitize']);
 angular.module('info', []);
 /*
  * AngularJS application modules from which depend views and components
