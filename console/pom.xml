@@ -49,7 +49,7 @@ under the License.
 
     <dependency>
       <groupId>org.newremmedia</groupId>
-      <artifactId>syncope-common</artifactId>
+      <artifactId>openums-common</artifactId>
       <version>${project.version}</version>
     </dependency>  
     
