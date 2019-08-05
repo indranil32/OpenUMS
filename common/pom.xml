@@ -29,7 +29,7 @@ under the License.
 
   <name>Apache Syncope sample project - Common</name>
   <groupId>org.newremmedia</groupId>
-  <artifactId>syncope-common</artifactId>
+  <artifactId>openums-common</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>

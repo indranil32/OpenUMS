@@ -29,7 +29,7 @@ under the License.
 
   <name>Apache Syncope sample project - Core</name>
   <groupId>org.newremmedia</groupId>
-  <artifactId>syncope-core</artifactId>
+  <artifactId>openums-core</artifactId>
   <packaging>war</packaging>
 
   <dependencies>
@@ -117,7 +117,7 @@ under the License.
   </dependencies>
 
   <build>
-    <finalName>syncope</finalName>
+    <finalName>openums</finalName>
 
     <plugins>
       <plugin>

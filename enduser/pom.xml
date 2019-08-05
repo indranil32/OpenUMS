@@ -29,7 +29,7 @@ under the License.
 
   <name>Apache Syncope sample project - Enduser</name>
   <groupId>org.newremmedia</groupId>
-  <artifactId>syncope-enduser</artifactId>
+  <artifactId>openums-enduser</artifactId>
   <packaging>war</packaging>
 
   <dependencies>
@@ -90,7 +90,7 @@ under the License.
   </dependencies>
 
   <build>
-    <finalName>syncope-enduser</finalName>
+    <finalName>openums-enduser</finalName>
 
     <plugins>
       <plugin>
@@ -211,7 +211,7 @@ under the License.
                       </then>
                     </if>
                     <if>
-                      <available file="../core/target/syncope/WEB-INF/lib/flowable-engine-${flowable.version}.jar"/>
+                      <available file="../core/target/openums/WEB-INF/lib/flowable-engine-${flowable.version}.jar"/>
                       <then>
                         <xslt basedir="../core/target/test-classes/backup" 
                               includes="MasterContent.xml"
@@ -232,15 +232,15 @@ under the License.
                 <phase>package</phase>
                 <configuration>
                   <target>
-                    <delete dir="../core/target/syncope/WEB-INF/classes/domains"/>
-                    <copy todir="../core/target/syncope/WEB-INF/classes/domains">
+                    <delete dir="../core/target/openums/WEB-INF/classes/domains"/>
+                    <copy todir="../core/target/openums/WEB-INF/classes/domains">
                       <fileset dir="../core/target/test-classes/domains"/>
                     </copy>
                     <copy file="../core/target/test-classes/connid.properties" 
-                          todir="../core/target/syncope/WEB-INF/classes" 
+                          todir="../core/target/openums/WEB-INF/classes" 
                           overwrite="true"/>
                     <copy file="../core/target/test-classes/db.jsp" 
-                          todir="../core/target/syncope" 
+                          todir="../core/target/openums" 
                           overwrite="true"/>
 
                     <copy file="${project.build.directory}/test-classes/enduser.properties" 
@@ -303,21 +303,21 @@ under the License.
                   </properties>
                 </deployable>
                 <deployable>
-                  <location>../core/target/syncope</location>
+                  <location>../core/target/openums</location>
                   <properties>
-                    <context>syncope</context>
+                    <context>openums</context>
                   </properties>
                 </deployable>
                 <deployable>
-                  <location>../console/target/syncope-console</location>
+                  <location>../console/target/openums-console</location>
                   <properties>
-                    <context>syncope-console</context>
+                    <context>openums-console</context>
                   </properties>
                 </deployable>
                 <deployable>
                   <location>${project.build.directory}/${project.build.finalName}</location>
                   <properties>
-                    <context>syncope-enduser</context>
+                    <context>openums-enduser</context>
                   </properties>
                 </deployable>
               </deployables>

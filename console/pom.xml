@@ -29,7 +29,7 @@ under the License.
 
   <name>Apache Syncope sample project - Console</name>
   <groupId>org.newremmedia</groupId>
-  <artifactId>syncope-console</artifactId>
+  <artifactId>openums-console</artifactId>
   <packaging>war</packaging>
 
   <dependencies>
@@ -99,7 +99,7 @@ under the License.
   </dependencies>
 
   <build>
-    <finalName>syncope-console</finalName>
+    <finalName>openums-console</finalName>
 
     <resources>
       <resource>
